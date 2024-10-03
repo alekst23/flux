@@ -1,4 +1,4 @@
-from diffusers import FluxPipeline
+from diffusers import FluxPipeline, FluxInpaintPipeline
 import torch
 from diffusers.utils import load_image
 import numpy as np
@@ -19,7 +19,7 @@ def make_image_inpaint(prompt, input_image, mask_image, width, height, guidance_
     :param num_inference_steps: The number of inference steps for the inpainting model.
     :return: The inpainted image.
     """
-    pipe = FluxPipeline.from_pretrained(
+    pipe = FluxInpaintPipeline.from_pretrained(
         ckpt_id,
         torch_dtype=torch.bfloat16
     )
@@ -51,7 +51,7 @@ def scroll_image_left(image, shift_fraction=0.5):
     shift_amount = int(width * shift_fraction)
     
     # Create a new image with the same dimensions and a transparent background
-    new_image = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    new_image = Image.new("RGB", (width, height), (0, 0, 0))
     
     # Paste the shifted part of the original image into the new image
     new_image.paste(image.crop((shift_amount, 0, width, height)), (0, 0))
