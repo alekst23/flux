@@ -208,7 +208,7 @@ def create_demo(model_name: str, device: str = "cuda" if torch.cuda.is_available
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="Flux")
-    parser.add_argument("--name", type=str, default="flux-schnell", choices=list(configs.keys()), help="Model name")
+    parser.add_argument("--name", type=str, default="flux-dev", choices=list(configs.keys()), help="Model name")
     parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu", help="Device to use")
     parser.add_argument("--offload", action="store_true", help="Offload model to CPU when not in use")
     parser.add_argument("--share", action="store_true", help="Create a public link to your demo")
