@@ -4,9 +4,9 @@ from diffusers.utils import load_image
 import numpy as np
 from PIL import Image
 
-ckpt_id = "black-forest-labs/FLUX.1-schnell"
+ckpt_id = "black-forest-labs/FLUX.1-dev"
 
-def make_image_inpaint(prompt, input_image, mask_image, width, height, guidance_scale=0.3, num_inference_steps=4):
+def make_image_inpaint(prompt, input_image, mask_image, width, height, guidance_scale=0.3, num_inference_steps=4, strength=1.0):
     """
     Generates an image using the FluxInpaintPipeline based on a prompt, input image, and mask image.
     
@@ -33,6 +33,7 @@ def make_image_inpaint(prompt, input_image, mask_image, width, height, guidance_
         mask_image=mask_image,
         height=height,
         width=width,
+        strength=strength,
         guidance_scale=guidance_scale,
         num_inference_steps=num_inference_steps
     ).images[0]
@@ -41,24 +42,30 @@ def make_image_inpaint(prompt, input_image, mask_image, width, height, guidance_
 
 def scroll_image_left(image, shift_fraction=0.5):
     """
-    Scrolls the image to the left by a specified fraction of its width.
+    Scrolls the image to the left by a specified fraction of its width and fills the right side with a copy of the original image.
     
     :param image: The input image to scroll.
     :param shift_fraction: The fraction of the width to scroll the image by.
-    :return: The scrolled image with the right half filled with transparent pixels.
+    :return: The scrolled image with the right side filled with a copy of the original image.
     """
     width, height = image.size
     shift_amount = int(width * shift_fraction)
     
-    # Create a new image with the same dimensions and a transparent background
-    new_image = Image.new("RGB", (width, height), (0, 0, 0))
+    # Create a new image that is a copy of the original
+    noise = np.random.randint(0, 256, (height, width, 3), dtype=np.uint8)
+    new_image = Image.fromarray(noise, 'RGB')
+    #new_image = Image.new("RGB", (width, height), (0, 0, 0))
+    #new_image = image.copy()
     
     # Paste the shifted part of the original image into the new image
     new_image.paste(image.crop((shift_amount, 0, width, height)), (0, 0))
     
+    # Paste the original image onto the right side of the new image
+    #new_image.paste(image, (width - shift_amount, 0))
+    
     return new_image
 
-def generate_mask(image):
+def generate_mask_half(image):
     """
     Generates a mask that's black on the left half and white on the right half.
     
@@ -69,8 +76,13 @@ def generate_mask(image):
     mask = Image.new('L', (width, height))
     mask_np = np.array(mask)
     mask_np[:, :width // 2] = 0  # Black on the left half
-    mask_np[:, width // 2:] = 255  # White on the right half
+    mask_np[:, (width-100) // 2:] = 255  # White on the right half
     return Image.fromarray(mask_np)
+    #return Image.new("RGB", (width, height), (255, 255, 255))
+
+def generate_mask_full(image):
+    width, height = image.size
+    return Image.new("RGB", (width, height), (255, 255, 255))
 
 def inpaint_image(prompt, input_image_path):
     """
