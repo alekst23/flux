@@ -5,16 +5,9 @@ from image_scrolling_inpaint import make_image, scroll_image_left, generate_mask
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Define a list of prompts for image generation
-prompts = [
-    "A scenic landscape with mountains and a clear sky",
-    "A futuristic cityscape at night with neon lights",
-    "A serene beach with palm trees and a sunset"
-]
-
 # Parameters for image generation
-width, height = 400, 800
-num_inference_steps = 8
+width, height = 512, 512
+num_inference_steps = 10
 guidance_scale = 0.0
 
 def print_image_properties(image, image_name):

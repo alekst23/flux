@@ -136,3 +136,24 @@ def make_image(prompt, width, height, num_inference_steps=10, guidance_scale=0.3
     ).images[0]
 
     return image
+
+
+def fix_stitching(surface: Image.Image, pos: float, patch: float):
+    """
+    Fixes a vertical stitch in the image
+
+    :image: source Image to fix
+    :pos: x position of the stitch as a percent of image width
+    :patch: width of patch to apply, as percent of image width
+    """
+    mask_width, mask_height = surface.size
+    mask = np.zeros((mask_height, mask_width, 3), dtype=np.uint8)
+    margin = int(mask_width*patch)
+    loc = int(mask_width*pos)
+    mask[:, :loc-margin//2] = 0
+    mask[:, loc-margin//2:loc+margin//2] = 255
+    mask[:, loc+margin//2:] = 0
+    img_mask = Image.fromarray(mask, 'RGB')
+    #img_mask.show()
+
+    return make_image_inpaint("", surface, img_mask, mask_width, mask_height, 0.0, 10, 0.40)
