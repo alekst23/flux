@@ -6,7 +6,7 @@ from PIL import Image
 
 ckpt_id = "black-forest-labs/FLUX.1-dev"
 
-def make_image_inpaint(prompt, input_image, mask_image, width, height, guidance_scale=0.3, num_inference_steps=4, strength=1.0):
+def make_image_inpaint(prompt, input_image, mask_image, width, height, guidance_scale=0.3, num_inference_steps=4, strength=1.0, model="dev"):
     """
     Generates an image using the FluxInpaintPipeline based on a prompt, input image, and mask image.
     
@@ -20,7 +20,7 @@ def make_image_inpaint(prompt, input_image, mask_image, width, height, guidance_
     :return: The inpainted image.
     """
     pipe = FluxInpaintPipeline.from_pretrained(
-        ckpt_id,
+        f"black-forest-labs/FLUX.1-{model}",
         torch_dtype=torch.bfloat16
     )
     pipe.vae.enable_tiling()
@@ -107,7 +107,7 @@ def combine_image_and_mask(image, mask):
     """
     return make_image_inpaint("Inpaint this image", image, mask, image.width, image.height)
 
-def make_image(prompt, width, height, num_inference_steps=10, guidance_scale=0.3):
+def make_image(prompt, width, height, num_inference_steps=10, guidance_scale=0.3, model="schnell"):
     """
     Generates an image using the FluxPipeline based on a prompt.
     
@@ -119,7 +119,7 @@ def make_image(prompt, width, height, num_inference_steps=10, guidance_scale=0.3
     :return: The generated image.
     """
     pipe = FluxPipeline.from_pretrained(
-        ckpt_id,
+        f"black-forest-labs/FLUX.1-{model}",
         torch_dtype=torch.bfloat16,
     )
     pipe.vae.enable_tiling()
@@ -138,7 +138,7 @@ def make_image(prompt, width, height, num_inference_steps=10, guidance_scale=0.3
     return image
 
 
-def fix_stitching(surface: Image.Image, pos: float, patch: float):
+def fix_stitching(surface: Image.Image, pos: float, patch: float, steps=10, strength=0.78, model="dev"):
     """
     Fixes a vertical stitch in the image
 
@@ -146,6 +146,7 @@ def fix_stitching(surface: Image.Image, pos: float, patch: float):
     :pos: x position of the stitch as a percent of image width
     :patch: width of patch to apply, as percent of image width
     """
+    ckpt_id = f"black-forest-labs/FLUX.1-{model}"
     mask_width, mask_height = surface.size
     mask = np.zeros((mask_height, mask_width, 3), dtype=np.uint8)
     margin = int(mask_width*patch)
@@ -156,4 +157,12 @@ def fix_stitching(surface: Image.Image, pos: float, patch: float):
     img_mask = Image.fromarray(mask, 'RGB')
     #img_mask.show()
 
-    return make_image_inpaint("", surface, img_mask, mask_width, mask_height, 0.0, 10, 0.40)
+    return make_image_inpaint("", surface, img_mask, mask_width, mask_height, 0.0, steps, strength)
+
+
+def new_img_white(width, height)->Image.Image:
+    return Image.new("RGB", (width*3, height), (255, 255, 255))
+
+def new_img_noise(width, height)->Image.Image:
+    noise = np.random.randint(0, 256, (height, width, 3), dtype=np.uint8)
+    return Image.fromarray(noise, 'RGB')

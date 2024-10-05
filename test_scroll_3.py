@@ -29,9 +29,10 @@ def mask_half_margin(mask_width, mask_height)->Image.Image:
     mask[:,mask_width//2-margin:] = 255
     return Image.fromarray(mask, 'RGB')
 
+
 # Parameters for image generation
 width, height = 1024, 512
-num_inference_steps = 14
+num_inference_steps = 20
 guidance_scale = 0.0
 strength = 0.775
 
@@ -40,7 +41,7 @@ prompt = "Pixelart background for a 2D videogame, an alien landscape with futuri
 basedir = "output/07"
 
 logging.info(f"Generating initial image for prompt: '{prompt}'")
-img1 = make_image(prompt, width, height, num_inference_steps, guidance_scale)
+img1 = make_image(prompt, width, height, num_inference_steps, guidance_scale, model="schnell")
 img1.save(f"{basedir}/0.png")
 #img1 = load_image("output/001.png")
 #img2 = load_image("output/002.png")
@@ -67,7 +68,8 @@ for i in range(0,10):
 
     # Generate new image
     logging.info("- new image")
-    img2 = make_image(prompt, width, height, num_inference_steps//4, guidance_scale)
+    img2 = make_image(prompt, width, height, num_inference_steps//4, guidance_scale, model="schnell")
+    img2.save(f"{basedir}/1.png")
 
     # Add to composition
     logging.info("- combine")
@@ -80,12 +82,13 @@ for i in range(0,10):
     
     # Fix stitching
     logging.info("- patch")
-    surface = fix_stitching(surface, 0.25, 0.3)
+    surface = fix_stitching(surface, 0.25, 0.5)
     #surface.show()
 
     # Save to output
     logging.info("- save")
     # Get a cropped left half of the image
-    cropped_image = surface.crop((0, 0, width, height))
-    cropped_image.save(f"{basedir}/000{i}.png")
+    #cropped_image = surface.crop((0, 0, width, height))
+    #cropped_image.save(f"{basedir}/000{i}.png")
+    surface.save(f"{basedir}/000{i}.png")
 

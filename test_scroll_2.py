@@ -8,20 +8,20 @@ import numpy as np
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Parameters for image generation
-width, height = 512, 512
-num_inference_steps = 10
+width, height = 1024, 512
+num_inference_steps = 4
 guidance_scale = 0.0
 strength = 0.86
 
 # Generate and process images based on prompts
-prompt = "Pixelart background image for a 2D sidescroller videogame, a distant landscape with mountains and a clear sky."
+prompt = "Pixelart background image for a 2D sidescroller videogame, continuous landscape with mountains and a clear sky."
 
 logging.info(f"Generating initial image for prompt: '{prompt}'")
-#make_image(prompt, width, height, num_inference_steps, guidance_scale).save("output/001.png")
-#make_image(prompt, width, height, num_inference_steps, guidance_scale).save("output/002.png")
+img1=make_image(prompt, width, height, num_inference_steps, guidance_scale)#.save("output/001.png")
+img2=make_image(prompt, width, height, num_inference_steps, guidance_scale)#.save("output/002.png")
 
-img1 = load_image("output/001.png")
-img2 = load_image("output/002.png")
+# img1 = load_image("output/001.png")
+# img2 = load_image("output/002.png")
 
 def new_img_white(width, height)->Image.Image:
     return Image.new("RGB", (width*3, height), (255, 255, 255))
@@ -70,12 +70,12 @@ mask.show()
 # img_new = make_image_inpaint(prompt, img_compose, mask, width*3, height, guidance_scale, num_inference_steps, strength)
 # img_new.show()
 for i in range(0,5):
-    strength=0.73+(0.02*i)
+    strength=0.75+(0.01*i)
     logging.info(f"Running generation. stregth={strength}")
-    make_image_inpaint(prompt, img_compose, mask, mask_width, mask_height, guidance_scale, 10, strength).show()
+    make_image_inpaint(prompt, img_compose, mask, mask_width, mask_height, guidance_scale, 4, strength).show()
 
-# strength=0.84
-# for i in range(0,5):
-#     steps = 2+2*i
-#     logging.info(f"Running generation. steps={steps}")
-#     make_image_inpaint(prompt, img_compose, mask, mask_width, mask_height, guidance_scale, steps, strength).show()
+strength=0.80
+for i in range(0,5):
+    steps = 2+2*i
+    logging.info(f"Running generation. steps={steps}")
+    make_image_inpaint(prompt, img_compose, mask, mask_width, mask_height, guidance_scale, steps, strength).show()
