@@ -41,7 +41,7 @@ prompt = "Pixelart background for a 2D videogame, an alien landscape with futuri
 basedir = "output/07"
 
 logging.info(f"Generating initial image for prompt: '{prompt}'")
-img1 = make_image(prompt, width, height, num_inference_steps, guidance_scale, model="schnell")
+img1 = make_image(prompt, width, height, num_inference_steps, guidance_scale, model="dev")
 img1.save(f"{basedir}/0.png")
 #img1 = load_image("output/001.png")
 #img2 = load_image("output/002.png")
@@ -68,7 +68,7 @@ for i in range(0,10):
 
     # Generate new image
     logging.info("- new image")
-    img2 = make_image(prompt, width, height, num_inference_steps//4, guidance_scale, model="schnell")
+    img2 = make_image(prompt, width, height, num_inference_steps//4, guidance_scale, model="dev")
     img2.save(f"{basedir}/1.png")
 
     # Add to composition

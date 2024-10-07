@@ -14,7 +14,6 @@ def template_horizon(width, height, pos: float=0.6)->Image.Image:
     canvas[:int(height*pos), :] = 255
     return Image.fromarray(canvas, 'RGB')
 
-def template_noisy_horizon(width, height, pos: float=0.6)->Image.Image
 width, height = 1024, 512
 
 seed = template_horizon(width, height)

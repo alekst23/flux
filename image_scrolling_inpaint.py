@@ -23,8 +23,8 @@ def make_image_inpaint(prompt, input_image, mask_image, width, height, guidance_
         f"black-forest-labs/FLUX.1-{model}",
         torch_dtype=torch.bfloat16
     )
-    pipe.vae.enable_tiling()
-    pipe.vae.enable_slicing()
+    #pipe.vae.enable_tiling()
+    #pipe.vae.enable_slicing()
     pipe.enable_sequential_cpu_offload()
 
     image = pipe(
