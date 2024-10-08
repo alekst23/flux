@@ -7,3 +7,4 @@ venv/
 _version.py
 system-log.txt
 output/
+static/images
