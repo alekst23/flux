@@ -1,7 +1,6 @@
 import logging
 from PIL import Image
-from image_scrolling_inpaint import make_image_inpaint, new_img_white, new_img_noise
-from diffusers.utils import load_image
+from image_utils import make_image_inpaint, new_img_white, new_img_noise
 import numpy as np
 
 # Set up logging
@@ -18,7 +17,6 @@ width, height = 1024, 512
 
 seed = template_horizon(width, height)
 i2 = new_img_noise(width, height)
-seed = seed+i2
 seed.show()
 
 mask = new_img_white(width, height)

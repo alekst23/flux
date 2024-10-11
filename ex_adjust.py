@@ -1,6 +1,6 @@
 import logging
 from PIL import Image, ImageDraw
-from image_scrolling_inpaint import make_image, make_image_inpaint, new_img_white, new_img_noise
+from image_utils import make_image, make_image_inpaint, new_img_white, new_img_noise
 from diffusers.utils import load_image
 import numpy as np
 

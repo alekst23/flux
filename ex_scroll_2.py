@@ -1,6 +1,6 @@
 import logging
 from PIL import Image
-from image_scrolling_inpaint import make_image, scroll_image_left, generate_mask_half, generate_mask_full, make_image_inpaint
+from image_utils import make_image, scroll_image_left, generate_mask_half, generate_mask_full, make_image_inpaint
 from diffusers.utils import load_image
 import numpy as np
 

@@ -17,10 +17,12 @@ writer = imageio.get_writer(output_file, fps=30)
 # Read the first image to get dimensions
 first_image = imageio.imread(os.path.join(image_dir, image_files[0]))
 #height, width = first_image.shape[:2]
-height, width = 512, 800
+height, width = 512, 512
 
 # Create a frame with the same dimensions as the original images
 frame = np.zeros((height, width, 3), dtype=np.uint8)
+# Copy first image to frame
+frame[:, :] = first_image[:, :width]
 
 print(f"Image shape: {first_image.shape}")
 print(f"Frame shape: {frame.shape}")
@@ -34,33 +36,21 @@ for i in range(0, len(image_files)):
     image_path = os.path.join(image_dir, image_file)
     image = imageio.imread(image_path)
     img_h, img_w, _ = image.shape
-    #if image.shape != (512,2048,3):
-    if img_w != 1024:
-        continue
+
     
     print(f"Processing file {image_file}")
 
-    # # If it's not the first frame, scroll the previous image
-    # if i > 0:
-    #     for j in range(width // 2):
-    #         # Crop the current image to fit the right half of the frame
-    #         cropped_image = image[:, :width - j]
-            
-    #         # Combine the scrolled previous image with the cropped current image
-    #         scrolled_frame = np.roll(frame, -j, axis=1)
-    #         scrolled_frame[:, -cropped_image.shape[1]:] = cropped_image
-
-
-    rate = 128
+    rate = 256
+    rate_dx = img_w//rate
     for j in range(0, rate):
-        rate_dx = img_w//rate
         x = j * rate_dx
-        # draw the image to the surface
-        #surface = np.copy(frame)
-        #surface[:,:] = image[:,x:x+width]
-        
+        if i == 0 and x < width:
+            continue
+
         # scroll the surface to the left
         surface = np.roll(surface, -rate_dx, axis=1)
+
+        # Fill the rightmost column with the new image
         surface[:,-rate_dx:] = image[:,x:x+rate_dx]
         
         writer.append_data(surface)

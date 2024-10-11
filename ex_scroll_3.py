@@ -1,7 +1,6 @@
 import logging
 from PIL import Image
-from image_scrolling_inpaint import make_image, scroll_image_left, generate_mask_half, generate_mask_full, make_image_inpaint, fix_stitching
-from diffusers.utils import load_image
+from image_utils import make_image, scroll_image_left, generate_mask_half, generate_mask_full, make_image_inpaint, fix_stitching
 import numpy as np
 
 # Set up logging
@@ -31,13 +30,13 @@ def mask_half_margin(mask_width, mask_height)->Image.Image:
 
 
 # Parameters for image generation
-width, height = 1024, 512
-num_inference_steps = 20
+width, height = 512, 512
+num_inference_steps = 15
 guidance_scale = 0.0
 strength = 0.775
 
 # Generate and process images based on prompts
-prompt = "Pixelart background for a 2D videogame, an alien landscape with futuristic buildings."
+prompt = "An alien landscape with futuristic buildings, pixelart background for a 2D videogame."
 basedir = "output/07"
 
 logging.info(f"Generating initial image for prompt: '{prompt}'")
@@ -82,13 +81,13 @@ for i in range(0,10):
     
     # Fix stitching
     logging.info("- patch")
-    surface = fix_stitching(surface, 0.25, 0.5)
+    surface = fix_stitching(surface, 0.25, 0.15, strength=0.75, steps=15)
     #surface.show()
 
     # Save to output
     logging.info("- save")
     # Get a cropped left half of the image
-    #cropped_image = surface.crop((0, 0, width, height))
-    #cropped_image.save(f"{basedir}/000{i}.png")
-    surface.save(f"{basedir}/000{i}.png")
+    cropped_image = surface.crop((0, 0, width, height))
+    cropped_image.save(f"{basedir}/000{i}.png")
+    #surface.save(f"{basedir}/000{i}.png")
 

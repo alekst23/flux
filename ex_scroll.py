@@ -1,6 +1,6 @@
 import logging
 from PIL import Image
-from image_scrolling_inpaint import make_image, scroll_image_left, generate_mask_half, generate_mask_full, make_image_inpaint
+from image_utils import make_image, scroll_image_left, generate_mask_half, generate_mask_full, make_image_inpaint
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
